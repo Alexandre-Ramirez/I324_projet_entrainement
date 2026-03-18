@@ -34,4 +34,4 @@ jobs:
           context: .
           push: true
           # Le tag sera : ghcr.io/ton-pseudo/nom-du-repo:latest
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/alexandre-ramirez/i324_projet_entrainement:latest
