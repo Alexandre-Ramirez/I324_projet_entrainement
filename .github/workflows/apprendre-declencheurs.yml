@@ -1,0 +1,20 @@
+name: Tester les declencheurs
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  afficher-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Identifier le declencheur
+        run: echo "Déclenché par ${{ github.event_name }}"
