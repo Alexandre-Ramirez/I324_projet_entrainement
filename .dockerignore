@@ -1,0 +1,27 @@
+# Dépendances (à ignorer absolument)
+node_modules [cite: 80]
+npm-debug.log [cite: 81]
+package-lock.json [cite: 82]
+
+# Environnement et secrets
+.env [cite: 83]
+.env.* [cite: 84]
+
+# IDE et éditeurs
+.vscode [cite: 86]
+.idea [cite: 87]
+
+# Git et configuration GitHub
+.git [cite: 89]
+.gitignore [cite: 90]
+.github [cite: 92, 94]
+
+# Fichiers temporaires et logs
+*.log [cite: 96]
+tmp [cite: 101]
+*.tmp [cite: 103]
+
+# Documentation
+README.md [cite: 106]
+LICENSE [cite: 108]
+docs/ [cite: 109]
