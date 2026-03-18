@@ -1,0 +1,52 @@
+name: 4.3 Cache et Artefacts
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout le code
+        uses: actions/checkout@v4
+
+      # Étape de mise en cache des node_modules
+      - name: Setup Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
+
+      # Génération d'un fichier d'information (Artefact)
+      - name: Generer build-info.txt
+        run: |
+          echo "Date du build : $(date)" > build-info.txt
+          echo "SHA du commit : ${{ github.sha }}" >> build-info.txt
+          echo "Auteur : ${{ github.actor }}" >> build-info.txt
+
+      # Sauvegarde du fichier pour GitHub
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: info-du-build
+          path: build-info.txt
+
+  display-job:
+    # Ce job attend que le premier soit fini
+    needs: build-job
+    runs-on: ubuntu-latest
+    steps:
+      # Téléchargement de l'artefact créé précédemment
+      - name: Download artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: info-du-build
+
+      - name: Afficher le contenu
+        run: cat build-info.txt
