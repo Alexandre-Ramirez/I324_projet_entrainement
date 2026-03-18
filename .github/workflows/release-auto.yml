@@ -1,0 +1,55 @@
+name: 4.4 Release Automatique
+
+on:
+  push:
+    # Se déclenche uniquement quand on pousse un tag commençant par v (ex: v1.0.1)
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout le code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Nécessaire pour générer le changelog
+
+      # 1. On build et on push l'image Docker (comme à l'exercice 1)
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          # On utilise le nom du tag pour l'image Docker
+          tags: |
+            ghcr.io/alexandre-ramirez/i324_projet_entrainement:${{ github.ref_name }}
+            ghcr.io/alexandre-ramirez/i324_projet_entrainement:latest
+
+      # 2. Création de la Release GitHub
+      - name: Créer la Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            ### Description
+            Nouvelle version de l'application.
+            
+            **Détails techniques :**
+            - SHA du commit : `${{ github.sha }}`
+            - Image Docker : `ghcr.io/alexandre-ramirez/i324_projet_entrainement:${{ github.ref_name }}`
+          draft: false
+          prerelease: false
+          generate_release_notes: true # Génère automatiquement la liste des changements
